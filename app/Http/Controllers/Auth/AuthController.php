@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -36,12 +35,14 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|confirmed',
+            'role'  => 'string'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
         ]);
 
         Auth::login($user, $request->has('remember_me'));

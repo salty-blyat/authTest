@@ -28,11 +28,27 @@
                         <a class="nav-link {{ request()->is('signin') ? 'active' : '' }}"
                             href="{{ route('signin') }}">Sign In</a>
                     </li>
+
+                    @if(auth()->check())
+                    @if(auth()->user()->role === 'admin')
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('admin') ? 'active' : '' }}"
+                            href="{{ route('dashboard') }}">Admin</a>
+                    </li>
+                    @endif
+
+                    <!-- Show Shop link for both admin and customer -->
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('shop') ? 'active' : '' }}"
+                            href="{{ route('shop') }}">Shop</a>
+                    </li>
+
+                    @endif
                 </ul>
             </div>
         </div>
     </nav>
-
+ 
     @if ($errors->any())
     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
         <strong class="font-bold">Whoops! Something went wrong.</strong>
@@ -46,22 +62,18 @@
     </div>
     @endif
 
-
-    
-    <div class="container my-4"  style="display: {{ request()->is('/') ? 'block' : 'none' }}">
+    <div class="container my-4" style="display: {{ request()->is('/') ? 'block' : 'none' }}">
         @if (Auth::check())
-            <h1>Hello, {{ Auth::user()->name }}!</h1> 
-            <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" style="display: inline;">
-                @csrf
-                <button type="submit" class="btn btn-primary">Log out</button>
-            </form>
+        <h1>Hello, {{ Auth::user()->name }}!</h1>
+        <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" style="display: inline">
+            @csrf
+            <button type="submit" class="btn btn-primary">Log out</button>
+        </form>
         @else
-            <h1>You're not signed in yet.</h1>
-           
+        <h1>You're not signed in yet.</h1>
+
         @endif
     </div>
-
-
 
     <div class="container my-4">
         <!-- Login Form -->
@@ -81,22 +93,21 @@
                     <input type="password" class="form-control" id="password" name="password" required />
                 </div>
                 <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+                    <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" />
                     <label class="form-check-label" for="remember_me">Remember Me</label>
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
         </div>
 
-        <!-- Sign In Form --> 
-        <div class="card" style="display: {{ request()->is('signin') ? 'block' : 'none' }}">
+        <!-- Sign In Form -->
+        <div class="card mb-4" style="display: {{ request()->is('signin') ? 'block' : 'none' }}">
             <div class="card-header">Sign In</div>
             <form class="card-body" method="POST" action="{{ route('auth.signin') }}">
                 @csrf
                 <div class="mb-3">
                     <label for="name" class="form-label">Username</label>
                     <input type="text" class="form-control" id="name" name="name" required />
-                     
                 </div>
 
                 <div class="mb-3">
@@ -114,6 +125,14 @@
                     <label for="signinConfirmPassword" class="form-label">Confirm Password</label>
                     <input type="password" class="form-control" id="signinConfirmPassword" name="password_confirmation"
                         required />
+                </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Select Role</label>
+                    <select class="form-select" id="role" name="role">
+                        <option value="admin">Admin</option>
+                        <option value="customer">Customer</option>
+                        <option value="guest" selected>Guest</option>
+                    </select>
                 </div>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" />
